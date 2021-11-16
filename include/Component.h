@@ -2,17 +2,13 @@
 #define COMPONENT_H
 
 #include <typeinfo>
+#include <SDL.h>
 
 class Component
 {
-private:
-    char* m_name;
-
 public:
-    Component(char* t_name) : m_name{t_name}
-    {
-    }
-    virtual char* name() { return m_name; }
+    Component(){}
+    virtual ~Component() = default;
 };
 
 class HealthComponent : public Component
@@ -21,7 +17,7 @@ private:
     int m_health;
 
 public:
-    HealthComponent(char* t_name, int t_health) : Component(t_name), m_health{t_health}
+    HealthComponent(int t_health) : m_health{t_health}
     {
     }
 
@@ -36,10 +32,13 @@ private:
     float m_posY;
 
 public:
-    PositionComponent(char* t_name, float t_x, float t_y) : Component(t_name), m_posX(t_x), m_posY(t_y)
+    PositionComponent(float t_x, float t_y) : m_posX(t_x), m_posY(t_y)
     {
     }
-
+    void addX(float t_x) {m_posX += t_x;}
+    void addY(float t_y) {m_posY += t_y;}
+    void setX(float t_x) {m_posX = t_x;}
+    void setY(float t_y) {m_posY = t_y;}
     float& x() { return m_posX; }
     float& y() { return m_posY; }
     
@@ -48,11 +47,10 @@ public:
 class InputComponent : public Component
 {
 private:
-
+    SDL_Event m_event;
 public:
-    InputComponent(char* t_name) : Component(t_name)
-    {
-    }
+    InputComponent(SDL_Event t_event) : m_event(t_event){}
+    SDL_Event event() { return m_event; }
 };
 
 #endif

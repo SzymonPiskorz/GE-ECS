@@ -16,6 +16,7 @@ public:
     void removeComponent(Component* c) {}
     std::vector<Component*>& components() { return m_components; }
     bool operator==(const Entity& other){return m_id == other.m_id;}
+    int entityID() {return m_id;}
 };
 
 #endif 

@@ -4,6 +4,7 @@
 #include <cstdint>
 #include <SDL_image.h>
 #include <SDL_ttf.h>
+#include "System.h"
 
 class Game
 {
@@ -28,4 +29,17 @@ private:
 
 	SDL_Window* m_window;
 	SDL_Renderer* m_renderer;
+	SDL_Event e{};
+
+	ControlSystem m_controlSystem;
+	RenderSystem m_renderSystem;
+	AISystem m_aiSystem;
+	HealthSystem m_healthSystem;
+
+	Entity m_player;
+	Entity m_villan;
+	Entity m_cortana;
+	Entity m_dinkyDi;
+
+	std::vector<Component*> m_compList;
 };

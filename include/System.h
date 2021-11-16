@@ -24,7 +24,7 @@ public:
             }
         }
     }
-    virtual std::vector<Entity> getEntities();
+    virtual std::vector<Entity> getEntities(){return m_entities;}
 };
 
 class ControlSystem : public System
@@ -33,17 +33,34 @@ class ControlSystem : public System
 public:
     virtual void update()
     {
-        printf("Control System\n");
-
         for(Entity& entity: m_entities)
         {
             for(Component* comp: entity.components())
             {
-                InputComponent* inputComp = dynamic_cast<InputComponent*>(comp);
+                InputComponent* inputComp{dynamic_cast<InputComponent*>(comp)};
+                PositionComponent* posComp{dynamic_cast<PositionComponent*>(comp)};
 
-                if(inputComp)
+                if(inputComp && posComp)
                 {
-                    //do movement here
+                    if(inputComp->event().type == SDL_KEYDOWN)
+                    {
+                        if(inputComp->event().key.keysym.sym == SDLK_d)
+                        {
+                            posComp->addX(2.5f);
+                        }
+                        if(inputComp->event().key.keysym.sym == SDLK_a)
+                        {
+                            posComp->addX(-2.5f);
+                        }
+                        if(inputComp->event().key.keysym.sym == SDLK_w)
+                        {
+                            posComp->addY(-2.5f);
+                        }
+                        if(inputComp->event().key.keysym.sym == SDLK_s)
+                        {
+                            posComp->addY(2.5f);
+                        }
+                    }
                 }
             }
         }   
@@ -53,20 +70,72 @@ public:
 class RenderSystem : public System
 {
     std::vector<Entity> m_entities;
+    SDL_FRect* rect;
 public:
-    virtual void update()
+    void update(){}
+    virtual void render(SDL_Renderer* renderer)
     {
-        printf("Render System\n");
+        for(Entity& entity: m_entities)
+        {
+            for(Component* comp: entity.components())
+            {
+                PositionComponent* posComp{dynamic_cast<PositionComponent*>(comp)};
+
+                if(posComp)
+                {
+                    rect->x = posComp->x();
+                    rect->y = posComp->y();
+                    rect->w = 100;
+                    rect->h = 100;
+                    SDL_SetRenderDrawColor(renderer, 255, 255, 0, 255);
+                    SDL_RenderDrawRectF(renderer, rect);
+                    SDL_SetRenderDrawColor(renderer, 255, 255, 255, 255);
+                }
+            }
+        }
     }
 };
 
 class AISystem : public System
 {
     std::vector<Entity> m_entities;
+    float xVel, yVel;
+
 public:
     virtual void update()
     {
-        printf("AI System\n");
+        for(Entity& entity: m_entities)
+        {
+            for(Component* comp: entity.components())
+            {
+                PositionComponent* posComp{dynamic_cast<PositionComponent*>(comp)};
+
+                if(posComp)
+                {
+                    std::cout << "Entity id: " << entity.entityID() << " X pos: " << posComp->x() << " Y pos: " << posComp->y() << std::endl;
+
+                    posComp->addX(xVel);
+                    posComp->addY(yVel);
+
+                    if(posComp->x() > 800)
+                    {
+                        posComp->setX(0);
+                    }
+                    else if(posComp->x() < 0)
+                    {
+                        posComp->setX(800);
+                    }
+                    if(posComp->y() > 600)
+                    {
+                        posComp->setY(0);
+                    }
+                    else if(posComp->y() < 0)
+                    {
+                        posComp->setY(600);
+                    }
+                }
+            }
+        }   
     }
 
 };
@@ -77,16 +146,15 @@ class HealthSystem : public System
 public:
     virtual void update()
     {
-        printf("Health System\n");
         for(Entity& entity: m_entities)
         {
             for(Component* comp: entity.components())
             {
-                HealthComponent* healthComp = dynamic_cast<HealthComponent*>(comp);
+                HealthComponent* healthComp{dynamic_cast<HealthComponent*>(comp)};
 
                 if(healthComp)
                 {
-                    std::cout << "Name: " << healthComp->name() << " Health: " << healthComp->health() << std::endl;
+                    std::cout << "Entity id: " << entity.entityID() << " Health: " << healthComp->health() << std::endl;
                 }
             }
         }   
