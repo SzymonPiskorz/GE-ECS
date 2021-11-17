@@ -112,7 +112,8 @@ public:
 
                 if(posComp)
                 {
-                    std::cout << "Entity id: " << entity.entityID() << " X pos: " << posComp->x() << " Y pos: " << posComp->y() << std::endl;
+                    std::string string = "Entity id: " + std::to_string(entity.entityID()) + " X pos: " + std::to_string(posComp->x()) + " Y pos: " + std::to_string(posComp->y());
+                    printf("%s", string.c_str());
 
                     posComp->addX(xVel);
                     posComp->addY(yVel);
@@ -154,7 +155,8 @@ public:
 
                 if(healthComp)
                 {
-                    std::cout << "Entity id: " << entity.entityID() << " Health: " << healthComp->health() << std::endl;
+                    std::string string = "Entity id: " + std::to_string(entity.entityID()) + " Health: " + std::to_string(healthComp->health());
+                    printf("%s", string.c_str());
                 }
             }
         }   
